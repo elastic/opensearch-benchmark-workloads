@@ -32,22 +32,11 @@ def query_samples(k: int, random_seed: int = None) -> List[str]:
         return random.choices(queries, weights=probabilities, k=k)
 
 
-class ParamSource:
+class QueryIteratorParamSource:
     def __init__(self, track, params, **kwargs):
         self.track = track
         self._params = params
         self.kwargs = kwargs
-
-    def partition(self, partition_index, total_partitions):
-        return self
-
-    def params(self):
-        return self._params
-
-
-class QueryIteratorParamSource(ParamSource):
-    def __init__(self, track, params, **kwargs):
-        super().__init__(track, params, **kwargs)
         self._batch_size = self._params.get("batch_size", 100000)
         self._random_seed = self._params.get("seed", None)
         self._sample_queries = query_samples(self._batch_size, self._random_seed)
