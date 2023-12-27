@@ -33,8 +33,8 @@ def query_samples(k: int, random_seed: int = None) -> List[str]:
 
 
 class QueryIteratorParamSource:
-    def __init__(self, track, params, **kwargs):
-        self.track = track
+    def __init__(self, workload, params, **kwargs):
+        self.track = workload
         self._params = params
         self.kwargs = kwargs
         self._batch_size = self._params.get("batch_size", 100000)
@@ -52,10 +52,10 @@ class QueryIteratorParamSource:
 
 
 class QueryParamSource(QueryIteratorParamSource):
-    def __init__(self, track, params, **kwargs):
-        super().__init__(track, params, **kwargs)
+    def __init__(self, workload, params, **kwargs):
+        super().__init__(workload, params, **kwargs)
         self._index_name = params.get(
-            "index", track.indices[0].name if len(track.indices) == 1 else "_all"
+            "index", workload.indices[0].name if len(workload.indices) == 1 else "_all"
         )
         self._cache = params.get("cache", True)
 
