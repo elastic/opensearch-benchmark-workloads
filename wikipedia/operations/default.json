@@ -1,0 +1,23 @@
+{
+  "name": "delete-index",
+  "operation-type": "delete-index",
+  "include-in-reporting": false
+},
+{
+  "name": "create-index",
+  "operation-type": "create-index",
+  "include-in-reporting": false
+},
+{
+  "name": "initial-documents-indexing",
+  "operation-type": "bulk",
+  "bulk-size": {{ initial_indexing_bulk_size | default(500) | int }},
+  "ingest-percentage": {{ initial_indexing_ingest_percentage | default(100) | int }}
+},
+{
+  "name": "query-string-search",
+  "operation-type": "search",
+  "param-source": "query-string-search",
+  "size" : {{ query_string_search_page_size | default(20) | int }},
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+}
