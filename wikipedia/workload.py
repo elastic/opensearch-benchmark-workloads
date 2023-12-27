@@ -32,23 +32,37 @@ def query_samples(k: int, random_seed: int = None) -> List[str]:
         return random.choices(queries, weights=probabilities, k=k)
 
 
-class QueryParamSource:
-    # We need to stick to the param source API
-    # noinspection PyUnusedLocal
-    def __init__(self, workload, params, **kwargs):
+class ParamSource:
+    def __init__(self, track, params, **kwargs):
+        self.track = track
         self._params = params
-        self.infinite = True
-        cwd = os.path.dirname(__file__)
-        # The terms.txt file has been generated with:
-        # sed -n '13~250p' [path_to_benchmark_data]/geonames/documents.json | shuf | sed -e "s/.*name\": \"//;s/\",.*$//" > terms.txt
-        with open(os.path.join(cwd, "terms.txt"), "r") as ins:
-            self.terms = [line.strip() for line in ins.readlines()]
+        self.kwargs = kwargs
 
-    # We need to stick to the param source API
-    # noinspection PyUnusedLocal
     def partition(self, partition_index, total_partitions):
         return self
 
+    def params(self):
+        return self._params
+
+
+class QueryIteratorParamSource(ParamSource):
+    def __init__(self, track, params, **kwargs):
+        super().__init__(track, params, **kwargs)
+        self._batch_size = self._params.get("batch_size", 100000)
+        self._random_seed = self._params.get("seed", None)
+        self._sample_queries = query_samples(self._batch_size, self._random_seed)
+        self._queries_iterator = None
+
+    def size(self):
+        return None
+
+    def partition(self, partition_index, total_partitions):
+        if self._queries_iterator is None:
+            self._queries_iterator = iter(self._sample_queries)
+        return self
+
+
+class QueryParamSource(QueryIteratorParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
         self._index_name = params.get(
