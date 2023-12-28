@@ -1,4 +1,4 @@
-## Wikipedia Search track
+## Wikipedia Search workload
 
 This track benchmarks
 
