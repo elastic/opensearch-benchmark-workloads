@@ -1,6 +1,6 @@
-## Wikipedia Search workload
+## Wikipedia workload
 
-This track benchmarks
+This workload has been derived from [wikipedia rally track](https://github.com/elastic/rally-tracks/tree/master/wikipedia). In order to understand how queries.csv file has been generated, please refer to wikipedia rally track.
 
 The dataset is derived from a dump of wikipedia availaible here:
 https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles-multistream.xml.bz2.
@@ -14,24 +14,6 @@ redirect: If the page is a redirect, the target of the redirection. In this case
 
 Fields that do not have values have been left out.
 
-### Generating the documents dataset
-
-To regenerate the dataset from scratch, first download and unzip an archive
-of Wikipedia dumps from [this link](https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles-multistream.xml.bz2) (~21GB).
-
-Then run this command:
-
-```bash
-python _tools/parse_documents.py <path_to_xml_file> | pbzip2 -9 -k -m2000 > pages.json.bz2
-```
-
-### Generating clickstream probability ditribution
-
-To generate the probability distribution of the most frequent queries in a specific month from the Wikimedia clickstream, please execute the following command
-
-```bash
-python3 _tools/parse_clicks.py --year 2023 --month 6 --lang en > queries.csv
-```
 
 ### Example Document
 
@@ -44,7 +26,7 @@ python3 _tools/parse_clicks.py --year 2023 --month 6 --lang en > queries.csv
 
 ### Parameters
 
-This track accepts the following parameters with Rally 0.8.0+ using `--track-params`:
+This workload accepts the following parameters with Rally 0.8.0+ using `--workload-params`:
 - Index settings:
   - `number_of_replicas` (default: `0`)
   - `number_of_shards` (default: `1`)
